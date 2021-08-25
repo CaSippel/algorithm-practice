@@ -1,0 +1,27 @@
+/* House Robber
+ * Approach: dynamic programming
+ * https://leetcode.com/problems/house-robber/
+*/
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        // cover simplest cases
+        size_t num_houses = nums.size();
+        if (num_houses == 1) {
+            return nums[0];
+        } else if (num_houses == 2) {
+            return max(nums[0], nums[1]);
+        }
+        // track max money at each stage
+        int max_money[num_houses];
+        max_money[0] = nums[0];
+        max_money[1] = max(nums[0], nums[1]);
+        
+        for (int i=2; i<num_houses; ++i) {
+            max_money[i] = max(nums[i] + max_money[i-2], max_money[i-1]);
+        }
+        // return max amount
+        return max_money[num_houses-1];
+    }
+};
