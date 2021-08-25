@@ -1,0 +1,46 @@
+/* House Robber III Solution
+ * Approach: DFS on a binary tree
+ * https://leetcode.com/problems/house-robber-iii/
+*/
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class Solution {
+private:
+    map<TreeNode*, int> money;
+public:
+    int rob(TreeNode* root) {
+        if (root == nullptr) {
+            return 0;
+        } else if (money.find(root) != money.end()) {
+            return money[root];
+        } else if (root->left == nullptr && root->right == nullptr) {
+            money[root] = root->val;
+            return root->val;
+        }
+        // look 2 nodes down
+        int currSum = root->val;
+        if (root->left) {
+            currSum += rob(root->left->left);
+            currSum += rob(root->left->right);
+        }
+        if (root->right) {
+            currSum += rob(root->right->left);
+            currSum += rob(root->right->right);
+        }
+        int nextSum = rob(root->left) + rob(root->right);
+        money[root] = max(currSum, nextSum);
+        return money[root];
+    }
+    /* side note: BFS will overcomplicate things because we want to
+     * build results from the ground up, not level by level
+     * BFS would have to track differing subtree values because all values
+     * on the same level can be different - i.e. [2,1,3,null,4]
+     */
+};
