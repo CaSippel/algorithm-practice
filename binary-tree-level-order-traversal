@@ -1,0 +1,84 @@
+/* Binary Tree Level Order Traversal
+ * Approach: BFS on a binary tree
+ * https://leetcode.com/problems/binary-tree-level-order-traversal/
+*/
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> result;
+        if (root == nullptr) {
+            return result;
+        }
+        vector<TreeNode*> nodes;
+        nodes.push_back(root);
+    
+        while (!nodes.empty()) {
+            vector<int> level_nodes;
+            vector<TreeNode*> next_level_nodes;
+            for (auto node: nodes) {
+                level_nodes.push_back(node->val);
+                if (node->left) {
+                    next_level_nodes.push_back(node->left);
+                }
+                if (node->right) {
+                    next_level_nodes.push_back(node->right);
+                }
+            }
+            nodes = next_level_nodes;
+            result.push_back(level_nodes);
+        }
+        return result;
+    }
+    
+    // first attempt using stacks
+    vector<vector<int>> levelOrderWithStacks(TreeNode* root) {
+        vector<vector<int>> result;
+        if (root == nullptr) {
+            return result;
+        }
+        deque<TreeNode*> stack1, stack2;
+        deque<TreeNode*>* stack_parent = &stack1;
+        deque<TreeNode*>* stack_child = &stack2;
+        stack_parent->push_back(root);
+        vector<int> level_nodes;
+        
+        while(!stack_parent->empty() || !stack_child->empty()) {
+            // if parent stack is empty, add vector to result and then switch stacks
+            if (stack_parent->empty()) {
+                result.push_back(level_nodes);
+                level_nodes.clear();
+                // swap the stack pointers
+                deque<TreeNode*>* tmp = stack_parent;
+                stack_parent = stack_child;
+                stack_child = tmp;
+            } else {
+                // push children onto the stack
+                TreeNode* node = stack_parent->front();
+                stack_parent->pop_front();
+                if (node->left != nullptr) {
+                    stack_child->push_back(node->left);
+                }
+                if (node->right != nullptr) {
+                    stack_child->push_back(node->right);
+                }
+                // add this to the level nodes
+                level_nodes.push_back(node->val);
+            }
+        }
+        // add any remaining nodes
+        if (!level_nodes.empty()) {
+            result.push_back(level_nodes);
+        }
+        return result;
+    }
+};
