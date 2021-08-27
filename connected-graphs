@@ -1,0 +1,42 @@
+/* Connected Graphs
+ * Approach: BFS on immediate neighbours
+ * Given a set of coordinates, return the number of unique connected graphs
+*/
+
+class Solution {
+    int numConnectedGraphs(const set<Coords>& coordinates) {
+        if (coordinates.size() < 2) {
+            return 0;
+        }
+        // keep track of visited, connected graphs, and potential adj neighbours
+        const Coords adj[4] = {Coords(1, 0), Coords(-1, 0), Coords(0, 1), Coords(0, -1)};
+        set<Coords> visited;
+        vector<vector<Coords>> graphs;
+        for (auto c: coordinates) {
+            if (visited.count(c) != 0) continue;
+
+            vector<Coords> g;
+            deque<Coords> stack;
+            stack.push_back(c);
+            while(!stack.empty()) {
+                Coords front = stack.front();
+                stack.pop_front();
+                if (visited.count(front) != 0) continue;
+
+                visited.insert(front);
+                g.push_back(front); // add point to the graph
+                for (auto adj_coord: adj) {
+                    Coords a(adj_coord.first + front.first,
+                             adj_coord.second + front.second);
+                    if (coordinates.count(a)) {
+                        // push adj coord since it exists
+                        stack.push_back(a);
+                    }
+                }
+            }
+            graphs.push_back(g);
+        }
+        // return the number of connected graphs
+        return graphs.size();
+    }
+};
