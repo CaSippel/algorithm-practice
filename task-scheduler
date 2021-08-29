@@ -1,0 +1,45 @@
+/* Task Scheduler
+ * Approach: priority queue
+ * https://leetcode.com/problems/task-scheduler
+*/
+
+class Solution {
+public:    
+    int leastInterval(vector<char>& tasks, int n) {
+        if (n == 0 || tasks.size() == 0) {
+            return tasks.size();
+        }
+        map<char, int> occurances;
+        // organize chars with their appearance
+        for (char c: tasks) {
+            occurances[c] += 1;
+        }
+        priority_queue<int> pq;
+        for (auto kv_pair: occurances) {
+            pq.push(kv_pair.second); // push the time it takes
+        }
+        
+        int result = 0;
+        while (!pq.empty()) {
+            int time = 0;
+            vector<int> v;
+            // count down time to push next 
+            for (int curr_n=n; curr_n >= 0; curr_n--) {
+                if (pq.empty()) {
+                    break;
+                }
+                v.push_back(pq.top() - 1); // schedule task
+                pq.pop(); // don't use this same char again
+                time++;
+            }
+            // push on the remaining chars that still need scheduling
+            for (int task_time: v) {
+                if (task_time > 0) {
+                    pq.push(task_time);
+                }
+            }
+            result += pq.empty() ? time : n + 1;
+        }
+        return result;
+    }
+};
