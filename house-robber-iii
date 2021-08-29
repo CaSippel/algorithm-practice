@@ -1,4 +1,4 @@
-/* House Robber III Solution
+/* House Robber III
  * Approach: DFS on a binary tree
  * https://leetcode.com/problems/house-robber-iii/
 */
