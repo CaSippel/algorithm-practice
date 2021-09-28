@@ -1,0 +1,43 @@
+/* Maximum Swap
+ * Approach: Priority Queue
+ * https://leetcode.com/problems/maximum-swap
+*/
+
+class Solution {
+public:
+    int maximumSwap(int num) {
+        // store numbers in ascending order
+        priority_queue<int> ascending_q; 
+        int curr = num;
+        while (curr != 0) {
+            ascending_q.push(curr % 10);
+            curr /= 10;
+        }
+        // find two indices to swap
+        // largest number will have its digits ascending
+        string numStr = to_string(num);
+        const size_t numStrSize = numStr.size();
+        int i = 0;
+        while (!ascending_q.empty()) {
+            if (i >= numStrSize) break;
+            int digit = numStr[i] - '0';
+            
+            if (ascending_q.top() == digit) {
+                ++i;
+                ascending_q.pop();
+            } else {
+                break; // need to swap this with next highest num
+            }
+        }
+        // find last occurence of ascending's top & swap with i
+        for(int j=numStrSize-1; j>i; --j) {
+            int digit = numStr[j] - '0';
+            if (ascending_q.top() == digit) {
+                numStr[j] = numStr[i];
+                numStr[i] = digit + '0';
+                break;
+            }
+        }
+        return stoi(numStr);
+    }
+};
